@@ -1,84 +1,93 @@
 <div align="center">
- ✨ CRXYZ — Profile Page ✨
- 
-A profile card, built from scratch with plain **HTML**, **CSS** & **JS**
+
+# ✨ CRXYZ — Profile Page ✨
+
+A personal "link-in-bio" style profile page, built from scratch with plain **HTML**, **CSS** & **JS**
 🚫 No frameworks · 🚫 No build step · ⚡ Just open and go
 
 </div>
 
- 
 ## 📸 Preview
 
 | Profile | Skills | Player |
 |:---:|:---:|:---:|
 | ![Profile section](assets/screenshots/main.png) | ![Skills section](assets/screenshots/skils.png) | ![Music player](assets/screenshots/music.png) |
 
-
 ---
- 
+
 ## 🗂️ Folder structure
- 
+
 ```
-gunslol_site/
-├── 📄 index.html          # markup only — no inline CSS or JS
-├── 🎨 css/
-│   └── styles.css         # all styling, incl. responsive PC layout
-├── ⚙️ js/
-│   └── script.js          # link config + click/keyboard wiring
-├── 🖼️ screenshots/         # preview images used in this README
+WEBSITE/
+├── 📄 index.html            # markup only — no inline CSS or JS
+├── 🎨 STYLES/
+│   └── styles.css           # all styling, incl. the liquid-glass effect & responsive layout
+├── ⚙️ script.js              # link config, tech-stack grid, and the music player
+├── 🖼️ assets/
+│   ├── background/          # background images
+│   ├── logos/                # certificate & tech-stack logos
+│   ├── profile/               # pfp, banner, Discord card image, Badges/
+│   ├── screenshots/           # preview images used in this README
+│   └── sounds/                # tracks played by the built-in music player
+├── .gitattributes
 └── 📘 README.md
 ```
- 
-⚠️ **Keep the folders together** — `index.html`, `css/styles.css`, and `js/script.js` all reference each other by relative path, so the layout has to stay intact for the page to render.
- 
+
+⚠️ **Keep the folders together** — `index.html`, `STYLES/styles.css`, and `script.js` all reference each other by relative path, so the layout has to stay intact for the page to render.
+
 ---
- 
+
 ## 🚀 Features
- 
-- 🧊 **Glass panels** — three separate frosted-glass cards: profile info, certificates/languages/tech stack, and the music player
-- 💬 **Hover tooltips** — languages and the Cisco certificate status pop up a small badge on hover (proficiency level / *"studying for it right now"*)
-- 🔗 **Working buttons** — the Discord card and every social icon are real, keyboard-accessible links
-- 📱💻 **Responsive** — phone-sized under ~520px, becomes a centered desktop card above that
+
+- 🧊 **Liquid-glass panels** — an SVG `feTurbulence`/`feDisplacementMap` filter drives a frosted, distorted-glass look across three cards: profile, skills/education, and the music player
+- 💬 **Discord profile card** — real username, badges (Active Developer, Bot Dev, Bug Hunter, Partner, HypeSquad, etc.) pulled straight into the markup
+- 🔗 **Working social row** — YouTube Music (x2), YouTube, Spotify, GitHub, Twitch and Steam, all real, keyboard-accessible links
+- 🎓 **Certificates & Education** — Cisco Certification and CompTIA Security+ (in progress), a completed TryHackMe certificate, plus a Technical School of Larnaca education entry with hover tooltips on status
+- 🛠️ **Tech stack grid** — categorized (Coding Languages, Databases, IDE, Tools, Frameworks, OS) and auto-built from `script.js`; each icon links out to the tech's official site
+- 🎵 **Built-in music player** — plays local tracks from `assets/sounds/`, with play/pause, next/previous, a progress bar and an expandable "Up next" playlist
+- 📱💻 **Responsive** — phone-sized card layout under ~520px, becomes a centered desktop card above that
+
 ---
- 
+
 ## 🔧 Editing your links
- 
-All outbound links live in **one place** — `js/script.js`:
- 
+
+All outbound social links live in **one place** — `script.js`:
+
 ```js
 const LINKS = {
   discord:       "https://discord.com/users/REPLACE_WITH_YOUR_ID",
-  youtubeMusic1: "https://music.youtube.com/channel/REPLACE_ME",
-  youtubeMusic2: "https://music.youtube.com/channel/REPLACE_ME",
-  youtube:       "https://youtube.com/@REPLACE_ME",
+  youtubeMusic1: "https://music.youtube.com/playlist?list=REPLACE_ME",
+  youtubeMusic2: "https://music.youtube.com/playlist?list=REPLACE_ME",
+  youtube:       "https://www.youtube.com/@REPLACE_ME",
+  spotify:       "https://open.spotify.com/user/REPLACE_ME",
   github:        "https://github.com/REPLACE_ME",
-  twitch:        "https://twitch.tv/REPLACE_ME",
-  steam:         "https://steamcommunity.com/id/REPLACE_ME"
+  twitch:        "https://www.twitch.tv/REPLACE_ME",
+  steam:         "https://steamcommunity.com/profiles/REPLACE_ME"
 };
 ```
- 
+
 ✏️ Just swap the placeholder URLs for your real ones — nothing else needs to change.
- 
+
 ---
- 
+
 ## 🖱️ How the buttons are wired
- 
+
 Any element in `index.html` tagged with `data-link="key"` gets auto-connected to `LINKS[key]`:
- 
+
 ```html
 <!-- index.html -->
 <a class="info-card" data-link="discord" aria-label="Open Discord profile">
   ...
 </a>
 ```
- 
+
 ```js
-// js/script.js
+// script.js
 document.querySelectorAll("[data-link]").forEach((el) => {
   const key = el.getAttribute("data-link");
   const url = LINKS[key];
   if (!url) return;
- 
+
   const open = () => window.open(url, "_blank", "noopener");
   el.addEventListener("click", open);
   el.addEventListener("keydown", (e) => {
@@ -89,54 +98,83 @@ document.querySelectorAll("[data-link]").forEach((el) => {
   });
 });
 ```
- 
+
 ➕ **Adding a new icon later?** Give it a `data-link="yourKey"` in the HTML, then add `yourKey: "https://..."` to `LINKS`. That's it.
- 
+
 ---
- 
+
+## 🧩 Tech stack grid
+
+The tech-stack chips shown in the "Skills" panel aren't hardcoded in the HTML — they're generated by `script.js` from a categorized list, and each one links to the tool's official site via `TECH_LINKS`:
+
+```js
+const TECH_LINKS = {
+  "C++": "https://isocpp.org/",
+  "Python": "https://www.python.org/",
+  // ...
+};
+
+const categories = [
+  { title: "Coding Languages", items: ["C++", "Python", "JavaScript", "CSS", "HTML5", "TypeScript", "Java"] },
+  { title: "Databases", items: ["MySQL", "Supabase", "MongoDB"] },
+  { title: "IDE", items: ["Vs Studio", "Notepad++", "Vim"] },
+  // ...
+];
+```
+
+➕ **Adding a skill?** Drop its SVG icon markup into the relevant `tech-item` block in `index.html`, then add its name + link to `TECH_LINKS` in `script.js` so it shows up in the grid.
+
+---
+
 ## 💡 Hover tooltip pattern
- 
-Languages and the certificate status both use the same lightweight **CSS-only** tooltip — zero JS involved:
- 
+
+Certificate and education status badges use a lightweight **CSS-only** tooltip — zero JS involved:
+
 ```css
-/* css/styles.css */
-.lang-chip::after{
-  content:attr(data-level);
+/* STYLES/styles.css */
+.cert-status::after{
+  content:attr(data-tip);
   position:absolute;
-  bottom:calc(100% + 10px);
   opacity:0;
   transition:opacity .15s ease, transform .15s ease;
 }
-.lang-chip:hover::after{ opacity:1; }
+.cert-status:hover::after{ opacity:1; }
 ```
- 
+
 ```html
-<span class="lang-chip" data-level="Fluent">English</span>
+<span class="cert-status" data-tip="Studying for it right now">In progress</span>
 ```
- 
-🔤 To add a language or change a level, just edit the `data-level` value.
- 
+
+🔤 To add or update a status, just edit the `data-tip` value.
+
 ---
- 
+
+## 🎵 The music player
+
+The player at the bottom of the page reads from a local playlist and plays files out of `assets/sounds/`. It supports play/pause, next/previous track, a live progress bar, and a collapsible "Up next" list built straight into the glass-panel UI. To add a track, drop the audio file into `assets/sounds/` and register it in the playlist config in `script.js`.
+
+---
+
 ## 🏃 Running locally
- 
+
 No build tools needed — just open `index.html`, or serve the folder:
- 
+
 ```bash
-cd gunslol_site
+cd WEBSITE
 python3 -m http.server 8000
 # 🌐 then visit http://localhost:8000
 ```
- 
+
 ---
- 
+
 ## 🌍 Deploying to GitHub Pages
- 
-1. 📤 Push this folder to a GitHub repo
-2. ⚙️ Repo **Settings → Pages** → set source to the branch/folder containing `index.html`
+
+1. 📤 Push this repo to GitHub
+2. ⚙️ Repo **Settings → Pages** → set source to the `main` branch (root)
 3. 🎉 Your page goes live at `https://<username>.github.io/<repo-name>/`
+
 ---
- 
+
 <div align="center">
 Made by CRXYZ
 </div>
