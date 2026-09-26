@@ -207,6 +207,11 @@ document.addEventListener("DOMContentLoaded", () => {
         audio: "assets/sounds/MKAY - Time Flies (Freestyle).mp3",
         art: "assets/logos/MKAY - Time Flies.jpg"
       },
+      {
+        title: "HEX",
+        audio: "assets/sounds/Hex.mp3",
+        art: "assets/logos/hex.Jpg"
+      },
     ];
     let trackIndex = 0;
 
@@ -296,3 +301,56 @@ document.addEventListener("DOMContentLoaded", () => {
     loadTrack(Math.floor(Math.random() * tracks.length), true);
   }
 });
+const reorderBtn = document.querySelector(".reorder-toggle");
+const sectionContainer = document.querySelector(".content");
+
+if (reorderBtn && sectionContainer) {
+  let reorderMode = false;
+  let originalOrder = [];
+  let dragSrc = null;
+
+  reorderBtn.addEventListener("click", () => {
+    const panels = [...sectionContainer.querySelectorAll(":scope > .glass-panel")];
+    reorderMode = !reorderMode;
+    reorderBtn.classList.toggle("is-active", reorderMode);
+    reorderBtn.setAttribute("aria-pressed", String(reorderMode));
+
+    if (reorderMode) {
+      originalOrder = panels;
+      panels.forEach((panel) => {
+        panel.setAttribute("draggable", "true");
+        panel.classList.add("is-draggable");
+      });
+    } else {
+      originalOrder.forEach((panel) => {
+        panel.removeAttribute("draggable");
+        panel.classList.remove("is-draggable", "is-dragging");
+        sectionContainer.appendChild(panel);
+      });
+    }
+  });
+
+  sectionContainer.addEventListener("dragstart", (e) => {
+    const panel = e.target.closest(".glass-panel");
+    if (!panel || !reorderMode) return;
+    dragSrc = panel;
+    panel.classList.add("is-dragging");
+    e.dataTransfer.effectAllowed = "move";
+  });
+
+  sectionContainer.addEventListener("dragend", (e) => {
+    const panel = e.target.closest(".glass-panel");
+    if (panel) panel.classList.remove("is-dragging");
+    dragSrc = null;
+  });
+
+  sectionContainer.addEventListener("dragover", (e) => {
+    if (!reorderMode || !dragSrc) return;
+    e.preventDefault();
+    const panel = e.target.closest(".glass-panel");
+    if (!panel || panel === dragSrc) return;
+    const rect = panel.getBoundingClientRect();
+    const isBefore = e.clientY - rect.top < rect.height / 2;
+    sectionContainer.insertBefore(dragSrc, isBefore ? panel : panel.nextSibling);
+  });
+}
