@@ -153,7 +153,7 @@ export default async function profileRoutes(app: FastifyInstance, ctx: Ctx) {
         const m = /^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/=]+)$/.exec(body.image);
         if (!m) throw bad('Upload a PNG, JPEG or WebP image.', 'bad_image');
         const bytes = Buffer.from(m[2], 'base64');
-        if (bytes.length > 600_000) throw bad('Pick a photo under 600 KB.', 'image_too_big');
+        if (bytes.length > 1_200_000) throw bad('Pick a smaller photo (under 1.2 MB).', 'image_too_big');
         run(ctx.db, 'UPDATE users SET avatar = ?, avatar_type = ?, avatar_version = ?, avatar_color = NULL WHERE id = ?', bytes, m[1], ctx.now(), req.userId);
       }
       return meView(ctx, req.userId);
