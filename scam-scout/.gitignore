@@ -1,9 +1,0 @@
-node_modules/
-data/
-.env
-*.db
-*.db-*
-.expo/
-dist/
-web-build/
-*.log
